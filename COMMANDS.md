@@ -16,3 +16,6 @@ protoc --go_out=application/grpc/pb --go_opt=paths=source_relative --go-grpc_out
 
 Evans
 evans -r repl
+
+grpc server
+go run cmd/main.go
