@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
-	"gorm.io/gorm"
+	"github.com/jinzhu/gorm"
 )
 
 type KafkaProcessor struct {

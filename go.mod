@@ -14,4 +14,5 @@ require (
 	google.golang.org/grpc v1.45.0
 	google.golang.org/protobuf v1.27.1
 	gorm.io/driver/sqlite v1.3.1
+	gorm.io/gorm v1.23.1
 )
