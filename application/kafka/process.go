@@ -23,7 +23,7 @@ func NewKafkaProcessor(database *gorm.DB, producer *ckafka.Producer, deliveryCha
 
 func (k *KafkaProcessor) Consume() {
 	configMap := &ckafka.ConfigMap{
-		"bootstrap.server": "kafka:9092",
+		"bootstrap.server": "kafka:9094",
 		"group.id":         "consumergroup",
 		"auto.offset":      "earliest",
 	}
@@ -40,5 +40,6 @@ func (k *KafkaProcessor) Consume() {
 		if err == nil {
 			fmt.Println(string(msg.Value))
 		}
+		return
 	}
 }
