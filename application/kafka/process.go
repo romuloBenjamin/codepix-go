@@ -23,9 +23,9 @@ func NewKafkaProcessor(database *gorm.DB, producer *ckafka.Producer, deliveryCha
 
 func (k *KafkaProcessor) Consume() {
 	configMap := &ckafka.ConfigMap{
-		"bootstrap.server": "kafka:9094",
-		"group.id":         "consumergroup",
-		"auto.offset":      "earliest",
+		"bootstrap.servers": "kafka:9094",
+		"group.id":          "consumergroup",
+		"auto.offset":       "earliest",
 	}
 	c, err := ckafka.NewConsumer(configMap)
 	if err != nil {
