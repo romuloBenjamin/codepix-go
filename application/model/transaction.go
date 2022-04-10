@@ -2,7 +2,6 @@ package model
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -22,7 +21,7 @@ func (t *Transaction) isValid() error {
 	v := validator.New()
 	err := v.Struct(t)
 	if err != nil {
-		fmt.Errorf("Error during Transaction validation: %s", err.Error())
+		//fmt.Errorf("Error during Transaction validation: %s", err.Error())
 		return err
 	}
 	return nil
@@ -38,6 +37,20 @@ func (t *Transaction) ParseJson(data []byte) error {
 		return err
 	}
 	return nil
+}
+
+func (t *Transaction) ToJson() ([]byte, error) {
+	err := t.isValid()
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := json.Marshal(t)
+	if err != nil {
+		return nil, nil
+	}
+
+	return result, nil
 }
 
 func NewTransaction() *Transaction {
