@@ -39,7 +39,24 @@ func (k *KafkaProcessor) Consume() {
 		msg, err := c.ReadMessage(-1)
 		if err == nil {
 			fmt.Println(string(msg.Value))
+			k.processMessage(msg)
 		}
-		return
 	}
+}
+
+func (k *KafkaProcessor) processMessage(msg *ckafka.Message) {
+	transactionsTopic := "transactions"
+	transactionConfirmationTopic := "transaction_confirmation"
+
+	switch topic := *msg.TopicPartition.Topic; topic {
+	case transactionsTopic:
+	case transactionConfirmationTopic:
+	default:
+		fmt.Println("not a valid topic", string(msg.Value))
+	}
+}
+
+func (k *KafkaProcessor) processTransaction(msg *ckafka.Message) error {
+	transaction := modal.NewTransaction()
+	err := transaction.ParseJson(msg.value)
 }
