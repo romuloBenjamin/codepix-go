@@ -28,14 +28,16 @@ func NewKafkaProcessor(database *gorm.DB, producer *ckafka.Producer, deliveryCha
 
 func (k *KafkaProcessor) Consume() {
 	configMap := &ckafka.ConfigMap{
-		"bootstrap.servers": os.Getenv("kafkaBootstrapServers"),
+		"bootstrap.servers": os.Getenv("kafkaBootstrapServersInternal"),
 		"group.id":          os.Getenv("kafkaConsumerGroupId"),
-		"auto.offset":       "earliest",
+		"auto.offset.reset": "earliest",
 	}
 	c, err := ckafka.NewConsumer(configMap)
+
 	if err != nil {
 		panic(err)
 	}
+
 	topics := []string{os.Getenv("kafkaTransactionTopic"), os.Getenv("kafkaTransactionConfirmationTopic")}
 	c.SubscribeTopics(topics, nil)
 
@@ -71,6 +73,7 @@ func (k *KafkaProcessor) processTransaction(msg *ckafka.Message) error {
 	}
 
 	transactionUseCase := factory.TransactionUseCaseFactory(k.Database)
+
 	createdTransaction, err := transactionUseCase.Register(
 		transaction.AccountID,
 		transaction.Amount,
@@ -79,7 +82,6 @@ func (k *KafkaProcessor) processTransaction(msg *ckafka.Message) error {
 		transaction.Description,
 		transaction.ID,
 	)
-
 	if err != nil {
 		fmt.Println("error registering transaction", err)
 		return err
@@ -109,12 +111,12 @@ func (k *KafkaProcessor) processTransactionConfirmation(msg *ckafka.Message) err
 	}
 
 	transactionUseCase := factory.TransactionUseCaseFactory(k.Database)
+
 	if transaction.Status == model.TransactionConfirmed {
 		err = k.confirmTransaction(transaction, transactionUseCase)
 		if err != nil {
 			return err
 		}
-		return nil
 	} else if transaction.Status == model.TransactionCompleted {
 		_, err := transactionUseCase.Complete(transaction.ID)
 		if err != nil {
